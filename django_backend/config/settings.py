@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,11 +26,19 @@ SECRET_KEY = 'django-insecure-0ku_as45vs5isd^px=t#m8g#^*x7f=w#gw-xb^t@^-pom)r^t6
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [
-    '.kavia.ai',
-    'localhost',
-    '127.0.0.1',
-    'testserver',
+# Host/CORS integration notes:
+# - React runs on :3000 and calls Django on :3001.
+# - In local/dev we accept common hosts by default.
+# - In stricter deployments, set DJANGO_ALLOWED_HOSTS and CORS_ALLOWED_ORIGINS.
+def _split_csv(val: str) -> list[str]:
+    return [p.strip() for p in (val or "").split(",") if p.strip()]
+
+
+ALLOWED_HOSTS = _split_csv(os.getenv("DJANGO_ALLOWED_HOSTS", "")) or [
+    ".kavia.ai",
+    "localhost",
+    "127.0.0.1",
+    "testserver",
 ]
 
 
@@ -48,10 +57,11 @@ INSTALLED_APPS = [
     'api'
 ]
 
+# IMPORTANT: SecurityMiddleware should come first; CorsMiddleware should be as high as possible
+# (before CommonMiddleware) per django-cors-headers docs.
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -81,12 +91,13 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 
 # Database
-# https://docs.djangoproject.com/en/5.2/ref/settings/#databases
-
+# Default to local sqlite file.
+# If the sqlite container provides SQLITE_DB, use it (path to sqlite file).
+_sqlite_db_path = os.getenv("SQLITE_DB", "")
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': _sqlite_db_path if _sqlite_db_path else (BASE_DIR / 'db.sqlite3'),
     }
 }
 
@@ -132,7 +143,12 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CORS_ALLOW_ALL_ORIGINS = True
+# CORS
+# Prefer explicit origins. For this workspace, default to the known React URL.
+_default_frontend = os.getenv("FRONTEND_URL", "https://vscode-internal-23044-beta.beta01.cloud.kavia.ai:3000")
+CORS_ALLOWED_ORIGINS = _split_csv(os.getenv("CORS_ALLOWED_ORIGINS", "")) or [_default_frontend]
+CORS_ALLOW_CREDENTIALS = True
+
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 USE_X_FORWARDED_HOST = True
 X_FRAME_OPTIONS = 'ALLOWALL'
