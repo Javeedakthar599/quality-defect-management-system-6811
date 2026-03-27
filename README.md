@@ -1,1 +1,3 @@
-# quality-defect-management-system-6811
+# Project Repository
+
+This is the initial README file for the project.
