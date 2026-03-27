@@ -1,0 +1,313 @@
+[
+  {
+    "model": "api.notificationrule",
+    "pk": 1,
+    "fields": {
+      "created_at": "2026-01-10T10:00:00Z",
+      "updated_at": "2026-01-10T10:00:00Z",
+      "name": "Overdue corrective actions (in-app)",
+      "enabled": true,
+      "event_type": "ACTION_OVERDUE",
+      "channel": "IN_APP",
+      "min_severity": "MEDIUM",
+      "parameters": "{\"days_overdue\": 0}"
+    }
+  },
+  {
+    "model": "api.notificationrule",
+    "pk": 2,
+    "fields": {
+      "created_at": "2026-01-10T10:00:00Z",
+      "updated_at": "2026-01-10T10:00:00Z",
+      "name": "High severity defect created (in-app)",
+      "enabled": true,
+      "event_type": "HIGH_SEVERITY",
+      "channel": "IN_APP",
+      "min_severity": "HIGH",
+      "parameters": "{}"
+    }
+  },
+
+  {
+    "model": "api.defect",
+    "pk": 1,
+    "fields": {
+      "created_at": "2026-01-12T09:30:00Z",
+      "updated_at": "2026-01-12T09:30:00Z",
+      "defect_id": "DF-1001",
+      "title": "Leak test failure at final assembly",
+      "description": "Units intermittently fail leak test after ultrasonic weld. Suspected tooling wear and inconsistent clamp force.",
+      "detected_on": "2026-01-12",
+      "product": "Pump-X",
+      "component": "Weld Joint",
+      "environment": "Line A",
+      "severity": "HIGH",
+      "priority": "P2",
+      "status": "ACTIONS",
+      "reported_by": "QA Inspector",
+      "owner": "Quality Lead",
+      "assignee": "Process Eng",
+      "tags": "leak,weld,assembly",
+      "due_date": "2026-01-20",
+      "closed_at": null
+    }
+  },
+  {
+    "model": "api.defect",
+    "pk": 2,
+    "fields": {
+      "created_at": "2026-02-02T14:05:00Z",
+      "updated_at": "2026-02-02T14:05:00Z",
+      "defect_id": "DF-1002",
+      "title": "Incorrect label template applied",
+      "description": "Shipping label uses outdated barcode format. Occurs when workstation cache is stale.",
+      "detected_on": "2026-02-02",
+      "product": "Valve-Z",
+      "component": "Labeling",
+      "environment": "Packout",
+      "severity": "MEDIUM",
+      "priority": "P3",
+      "status": "IN_PROGRESS",
+      "reported_by": "Warehouse",
+      "owner": "Operations",
+      "assignee": "IT Support",
+      "tags": "label,barcode,shipping",
+      "due_date": "2026-02-10",
+      "closed_at": null
+    }
+  },
+  {
+    "model": "api.defect",
+    "pk": 3,
+    "fields": {
+      "created_at": "2026-02-15T08:15:00Z",
+      "updated_at": "2026-02-18T16:45:00Z",
+      "defect_id": "DF-1003",
+      "title": "Critical torque spec not met on fastener",
+      "description": "Torque tool battery drop causes premature cutoff. Several units found under-torqued.",
+      "detected_on": "2026-02-15",
+      "product": "Pump-X",
+      "component": "Fastener",
+      "environment": "Line B",
+      "severity": "CRITICAL",
+      "priority": "P1",
+      "status": "RCA",
+      "reported_by": "Customer Complaint",
+      "owner": "Quality Lead",
+      "assignee": "Manufacturing Eng",
+      "tags": "torque,fastener,safety",
+      "due_date": "2026-02-19",
+      "closed_at": null
+    }
+  },
+
+  {
+    "model": "api.workflowhistory",
+    "pk": 1,
+    "fields": {
+      "created_at": "2026-01-12T09:35:00Z",
+      "updated_at": "2026-01-12T09:35:00Z",
+      "defect": 1,
+      "from_status": "NEW",
+      "to_status": "TRIAGED",
+      "changed_by": "Quality Lead",
+      "comment": "Triaged: likely process issue. Assigning to Process Eng."
+    }
+  },
+  {
+    "model": "api.workflowhistory",
+    "pk": 2,
+    "fields": {
+      "created_at": "2026-01-12T11:00:00Z",
+      "updated_at": "2026-01-12T11:00:00Z",
+      "defect": 1,
+      "from_status": "TRIAGED",
+      "to_status": "RCA",
+      "changed_by": "Process Eng",
+      "comment": "Starting root cause analysis."
+    }
+  },
+  {
+    "model": "api.workflowhistory",
+    "pk": 3,
+    "fields": {
+      "created_at": "2026-01-14T15:20:00Z",
+      "updated_at": "2026-01-14T15:20:00Z",
+      "defect": 1,
+      "from_status": "RCA",
+      "to_status": "ACTIONS",
+      "changed_by": "Process Eng",
+      "comment": "RCA complete. Creating corrective actions."
+    }
+  },
+
+  {
+    "model": "api.rcaanalysis",
+    "pk": 1,
+    "fields": {
+      "created_at": "2026-01-12T11:05:00Z",
+      "updated_at": "2026-01-14T15:10:00Z",
+      "defect": 1,
+      "status": "COMPLETE",
+      "root_cause": "Clamp force drift due to worn pneumatic regulator causing inconsistent weld energy.",
+      "contributing_factors": "PM intervals extended; no in-process monitoring of clamp pressure.",
+      "completed_by": "Process Eng",
+      "completed_at": "2026-01-14T15:10:00Z"
+    }
+  },
+  {
+    "model": "api.fivewhyentry",
+    "pk": 1,
+    "fields": {
+      "created_at": "2026-01-13T09:00:00Z",
+      "updated_at": "2026-01-13T09:00:00Z",
+      "rca": 1,
+      "why_number": 1,
+      "problem_statement": "Leak test failure",
+      "why_text": "Because the weld joint was not sealed consistently."
+    }
+  },
+  {
+    "model": "api.fivewhyentry",
+    "pk": 2,
+    "fields": {
+      "created_at": "2026-01-13T09:10:00Z",
+      "updated_at": "2026-01-13T09:10:00Z",
+      "rca": 1,
+      "why_number": 2,
+      "problem_statement": "",
+      "why_text": "Because clamp force varied between cycles, changing weld energy."
+    }
+  },
+  {
+    "model": "api.fivewhyentry",
+    "pk": 3,
+    "fields": {
+      "created_at": "2026-01-13T09:20:00Z",
+      "updated_at": "2026-01-13T09:20:00Z",
+      "rca": 1,
+      "why_number": 3,
+      "problem_statement": "",
+      "why_text": "Because the pneumatic regulator output drifted as it wore."
+    }
+  },
+  {
+    "model": "api.fivewhyentry",
+    "pk": 4,
+    "fields": {
+      "created_at": "2026-01-13T09:30:00Z",
+      "updated_at": "2026-01-13T09:30:00Z",
+      "rca": 1,
+      "why_number": 4,
+      "problem_statement": "",
+      "why_text": "Because preventive maintenance intervals were extended without re-validation."
+    }
+  },
+  {
+    "model": "api.fivewhyentry",
+    "pk": 5,
+    "fields": {
+      "created_at": "2026-01-13T09:40:00Z",
+      "updated_at": "2026-01-13T09:40:00Z",
+      "rca": 1,
+      "why_number": 5,
+      "problem_statement": "",
+      "why_text": "Because maintenance KPI focused on uptime, and pressure monitoring was not part of control plan."
+    }
+  },
+
+  {
+    "model": "api.correctiveaction",
+    "pk": 1,
+    "fields": {
+      "created_at": "2026-01-14T15:30:00Z",
+      "updated_at": "2026-01-14T15:30:00Z",
+      "defect": 1,
+      "title": "Replace pneumatic regulator and calibrate clamp pressure",
+      "description": "Swap regulator, calibrate clamp pressure to spec, and document settings.",
+      "action_type": "CORRECTIVE",
+      "status": "IN_PROGRESS",
+      "owner": "Maintenance",
+      "due_date": "2026-01-18",
+      "completed_at": null
+    }
+  },
+  {
+    "model": "api.correctiveaction",
+    "pk": 2,
+    "fields": {
+      "created_at": "2026-01-14T15:32:00Z",
+      "updated_at": "2026-01-14T15:32:00Z",
+      "defect": 1,
+      "title": "Add clamp pressure check to start-up checklist",
+      "description": "Add measurement step; train operators; store readings.",
+      "action_type": "PREVENTIVE",
+      "status": "OPEN",
+      "owner": "Quality Lead",
+      "due_date": "2026-01-22",
+      "completed_at": null
+    }
+  },
+
+  {
+    "model": "api.rcaanalysis",
+    "pk": 2,
+    "fields": {
+      "created_at": "2026-02-16T10:00:00Z",
+      "updated_at": "2026-02-18T16:45:00Z",
+      "defect": 3,
+      "status": "DRAFT",
+      "root_cause": "",
+      "contributing_factors": "Battery management; tool maintenance; training gaps",
+      "completed_by": "",
+      "completed_at": null
+    }
+  },
+  {
+    "model": "api.fivewhyentry",
+    "pk": 6,
+    "fields": {
+      "created_at": "2026-02-17T09:00:00Z",
+      "updated_at": "2026-02-17T09:00:00Z",
+      "rca": 2,
+      "why_number": 1,
+      "problem_statement": "Under-torqued fastener",
+      "why_text": "Because the torque tool cut off early under load."
+    }
+  },
+
+  {
+    "model": "api.correctiveaction",
+    "pk": 3,
+    "fields": {
+      "created_at": "2026-02-18T17:00:00Z",
+      "updated_at": "2026-02-18T17:00:00Z",
+      "defect": 3,
+      "title": "Implement battery health check and spare rotation",
+      "description": "Daily battery health check; rotate spare batteries; log results.",
+      "action_type": "PREVENTIVE",
+      "status": "OVERDUE",
+      "owner": "Manufacturing Eng",
+      "due_date": "2026-02-19",
+      "completed_at": null
+    }
+  },
+
+  {
+    "model": "api.alertevent",
+    "pk": 1,
+    "fields": {
+      "created_at": "2026-02-20T08:00:00Z",
+      "updated_at": "2026-02-20T08:00:00Z",
+      "rule": 1,
+      "defect": 3,
+      "corrective_action": 3,
+      "level": "CRITICAL",
+      "title": "Overdue corrective action",
+      "message": "Action 'Implement battery health check and spare rotation' is overdue for DF-1003.",
+      "acknowledged": false,
+      "acknowledged_by": "",
+      "acknowledged_at": null
+    }
+  }
+]
